@@ -5,8 +5,6 @@
 
 echo "Creating firebase-config.js..."
 
-# Use a "here document" to write the file content.
-# The EOL marker signifies the end of the content.
 cat > firebase-config.js << EOL
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -14,13 +12,13 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase
 
 // Your web app's Firebase configuration, populated by environment variables
 const firebaseConfig = {
-  apiKey: "\$FIREBASE_API_KEY",
-  authDomain: "\$FIREBASE_AUTH_DOMAIN",
-  projectId: "\$FIREBASE_PROJECT_ID",
-  storageBucket: "\$FIREBASE_STORAGE_BUCKET",
-  messagingSenderId: "\$FIREBASE_MESSAGING_SENDER_ID",
-  appId: "\$FIREBASE_APP_ID",
-  measurementId: "\$FIREBASE_MEASUREMENT_ID"
+  apiKey: "$FIREBASE_API_KEY",
+  authDomain: "$FIREBASE_AUTH_DOMAIN",
+  projectId: "$FIREBASE_PROJECT_ID",
+  storageBucket: "$FIREBASE_STORAGE_BUCKET",
+  messagingSenderId: "$FIREBASE_MESSAGING_SENDER_ID",
+  appId: "$FIREBASE_APP_ID",
+  measurementId: "$FIREBASE_MEASUREMENT_ID"
 };
 
 // Initialize Firebase
