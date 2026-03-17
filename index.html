@@ -1,50 +1,63 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subscription Tracker</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gray-900 text-white">
-    <div class="container mx-auto p-4">
-        <h1 class="text-3xl font-bold mb-4">Subscription Tracker</h1>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div>
-                <h2 class="text-2xl font-bold mb-4">Add Subscription</h2>
-                <form id="subscription-form" class="space-y-4">
-                    <div>
-                        <label for="name" class="block mb-2">Subscription Name</label>
-                        <input type="text" id="name" class="w-full bg-gray-800 rounded p-2" required>
-                    </div>
-                    <div>
-                        <label for="price" class="block mb-2">Monthly Price</label>
-                        <input type="number" id="price" class="w-full bg-gray-800 rounded p-2" required>
-                    </div>
-                    <div>
-                        <label for="category" class="block mb-2">Category</label>
-                        <input type="text" id="category" class="w-full bg-gray-800 rounded p-2" required>
-                    </div>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 rounded p-2 w-full">Add Subscription</button>
-                </form>
+    <!-- Login Page -->
+    <section id="login-page" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800">
+        <div class="bg-gray-800 p-10 rounded-xl shadow-2xl max-w-sm w-full text-center">
+            <h1 class="text-4xl font-bold mb-2">Subscription Tracker</h1>
+            <p class="text-gray-400 mb-8">Sign in to manage your subscriptions.</p>
+            <button id="login-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg w-full transition duration-300">
+                Sign in with Google
+            </button>
+        </div>
+    </section>
+
+    <!-- Dashboard Page (Initially Hidden) -->
+    <section id="dashboard-page" class="hidden min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-gray-800 p-4 shadow-md flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Dashboard</h1>
+            <div id="user-profile" class="flex items-center">
+                <!-- User info will be injected here by JavaScript -->
             </div>
+        </header>
 
-            <div>
-                <h2 class="text-2xl font-bold mb-4">Subscriptions</h2>
-                <div id="subscription-list" class="space-y-4"></div>
-                <div class="mt-4">
-                    <h3 class="text-xl font-bold">Total Monthly Spend: $<span id="total-spend">0.00</span></h3>
+        <!-- Main Content -->
+        <main class="flex-grow p-8">
+            <div class="max-w-4xl mx-auto">
+                <h2 class="text-3xl font-bold mb-6">Your Subscriptions</h2>
+                
+                <!-- Subscription Form -->
+                <form id="subscription-form" class="bg-gray-800 p-6 rounded-lg shadow-lg mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <input type="text" id="name" placeholder="Subscription Name" class="bg-gray-700 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                        <input type="number" id="price" placeholder="Price ($)" class="bg-gray-700 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                        <input type="text" id="category" placeholder="Category" class="bg-gray-700 p-3 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" required>
+                    </div>
+                    <button type-="submit" class="mt-4 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-lg transition duration-300">Add Subscription</button>
+                </form>
+
+                <!-- Subscription List -->
+                <div id="subscription-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Subscriptions will be injected here -->
+                </div>
+
+                <!-- Total Spend -->
+                <div class="mt-8 text-right">
+                    <h3 class="text-2xl font-bold">Total Monthly Spend: $<span id="total-spend">0.00</span></h3>
                 </div>
             </div>
-        </div>
-    </div>
+        </main>
+    </section>
 
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js" type="module"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js" type="module"></script>
-    <script src="firebase-config.js" type="module"></script>
-    <script src="main.js" type="module"></script>
+    <script type="module" src="main.js"></script>
 </body>
 </html>

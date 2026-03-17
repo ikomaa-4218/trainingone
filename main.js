@@ -1,29 +1,106 @@
-// Import the database instance from our firebase-config
-import { db } from './firebase-config.js';
-// Import the necessary functions from the Firestore SDK
-import { collection, addDoc, onSnapshot, doc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+// Import the database and auth instances from our firebase-config
+import { db, auth } from './firebase-config.js';
+// Import the necessary functions from the Firebase SDKs
+import { GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { collection, addDoc, onSnapshot, doc, deleteDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-// Get references to the DOM elements
+// --- DOM Elements ---
+const loginPage = document.getElementById('login-page');
+const dashboardPage = document.getElementById('dashboard-page');
+const loginBtn = document.getElementById('login-btn');
+const userProfile = document.getElementById('user-profile');
 const subscriptionForm = document.getElementById('subscription-form');
 const subscriptionList = document.getElementById('subscription-list');
 const totalSpendElement = document.getElementById('total-spend');
 
-// --- READ (R) ---
-// Set up a real-time listener to fetch and display subscriptions
-const subscriptionsCol = collection(db, 'subscriptions');
-const q = query(subscriptionsCol, orderBy('name')); // Order by name
+// --- Authentication Logic ---
+const provider = new GoogleAuthProvider();
 
-onSnapshot(q, (snapshot) => {
-    let subscriptions = [];
-    snapshot.docs.forEach((doc) => {
-        subscriptions.push({ ...doc.data(), id: doc.id });
+// Sign in with Google
+loginBtn.addEventListener('click', () => {
+    signInWithPopup(auth, provider).catch(error => console.error("Sign in error", error));
+});
+
+// Listen for auth state changes
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        // User is signed in
+        showDashboard(user);
+    } else {
+        // User is signed out
+        showLoginPage();
+    }
+});
+
+// --- View Switching Logic ---
+function showLoginPage() {
+    loginPage.style.display = 'flex';
+    dashboardPage.style.display = 'none';
+}
+
+function showDashboard(user) {
+    loginPage.style.display = 'none';
+    dashboardPage.style.display = 'flex'; // Use flex because it's a flex container
+    setupDashboard(user);
+}
+
+// --- Dashboard Setup ---
+function setupDashboard(user) {
+    // Display user profile
+    userProfile.innerHTML = `
+        <img src="${user.photoURL}" alt="${user.displayName}" class="w-10 h-10 rounded-full mr-4">
+        <button id="logout-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Logout</button>
+    `;
+
+    // Add logout functionality
+    document.getElementById('logout-btn').addEventListener('click', () => {
+        signOut(auth).catch(error => console.error("Sign out error", error));
     });
 
-    // Clear the current list
-    subscriptionList.innerHTML = '';
+    // Initialize Firestore functionality for the logged-in user
+    initFirestore(user.uid);
+}
 
-    // Calculate total spend and render subscriptions
+
+// --- Firestore Logic ---
+let subscriptionsUnsubscribe = null; // To hold the listener
+
+function initFirestore(userId) {
+    const subscriptionsCol = collection(db, 'subscriptions');
+    const q = query(subscriptionsCol, where("userId", "==", userId), orderBy('name'));
+
+    // Set up a real-time listener
+    subscriptionsUnsubscribe = onSnapshot(q, (snapshot) => {
+        let subscriptions = [];
+        snapshot.docs.forEach((doc) => {
+            subscriptions.push({ ...doc.data(), id: doc.id });
+        });
+
+        renderSubscriptions(subscriptions);
+    });
+
+    // Handle form submission
+    subscriptionForm.onsubmit = async (e) => {
+        e.preventDefault();
+        const name = subscriptionForm.name.value;
+        const price = subscriptionForm.price.value;
+        const category = subscriptionForm.category.value;
+
+        await addDoc(subscriptionsCol, {
+            name: name,
+            price: Number(price),
+            category: category,
+            userId: userId // Associate subscription with the user
+        });
+        subscriptionForm.reset();
+    };
+}
+
+// --- UI Rendering ---
+function renderSubscriptions(subscriptions) {
+    subscriptionList.innerHTML = '';
     let totalSpend = 0;
+
     subscriptions.forEach(sub => {
         totalSpend += Number(sub.price);
         const div = document.createElement('div');
@@ -40,41 +117,14 @@ onSnapshot(q, (snapshot) => {
         subscriptionList.appendChild(div);
     });
 
-    // Update total spend in the UI
     totalSpendElement.textContent = totalSpend.toFixed(2);
-});
+}
 
-// --- CREATE (C) ---
-// Add a new subscription when the form is submitted
-subscriptionForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    const name = subscriptionForm.name.value;
-    const price = subscriptionForm.price.value;
-    const category = subscriptionForm.category.value;
-
-    try {
-        await addDoc(subscriptionsCol, {
-            name: name,
-            price: Number(price),
-            category: category
-        });
-        subscriptionForm.reset(); // Clear the form
-    } catch (error) {
-        console.error("Error adding document: ", error);
-    }
-});
-
-
-// --- DELETE (D) ---
-// Delete a subscription when a delete button is clicked
+// --- Event Delegation for Deletes ---
 subscriptionList.addEventListener('click', async (e) => {
     if (e.target.classList.contains('delete-btn')) {
         const id = e.target.getAttribute('data-id');
-        try {
-            await deleteDoc(doc(db, 'subscriptions', id));
-        } catch (error) {
-            console.error("Error removing document: ", error);
-        }
+        await deleteDoc(doc(db, 'subscriptions', id));
     }
 });
+
