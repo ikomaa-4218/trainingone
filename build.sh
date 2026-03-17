@@ -9,24 +9,26 @@ cat > firebase-config.js << EOL
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 // Your web app's Firebase configuration, populated by environment variables
 const firebaseConfig = {
-  apiKey: "$FIREBASE_API_KEY",
-  authDomain: "$FIREBASE_AUTH_DOMAIN",
-  projectId: "$FIREBASE_PROJECT_ID",
-  storageBucket: "$FIREBASE_STORAGE_BUCKET",
-  messagingSenderId: "$FIREBASE_MESSAGING_SENDER_ID",
-  appId: "$FIREBASE_APP_ID",
-  measurementId: "$FIREBASE_MEASUREMENT_ID"
+  apiKey: "\$FIREBASE_API_KEY",
+  authDomain: "\$FIREBASE_AUTH_DOMAIN",
+  projectId: "\$FIREBASE_PROJECT_ID",
+  storageBucket: "\$FIREBASE_STORAGE_BUCKET",
+  messagingSenderId: "\$FIREBASE_MESSAGING_SENDER_ID",
+  appId: "\$FIREBASE_APP_ID",
+  measurementId: "\$FIREBASE_MEASUREMENT_ID"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-// Export the firestore instance so other modules can use it
-export { db };
+// Export the instances so other modules can use them
+export { db, auth };
 EOL
 
 echo "firebase-config.js created successfully."
