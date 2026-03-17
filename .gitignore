@@ -1,0 +1,10 @@
+# Firebase
+firebase-config.js
+.firebase/
+database-debug.log
+firestore-debug.log
+
+# General
+node_modules/
+.DS_Store
+*.log
