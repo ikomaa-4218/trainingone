@@ -2,31 +2,37 @@
 
 ## Overview
 
-This document outlines the plan for building a single-page Subscription Tracker application. The application will allow users to manage their subscriptions, track monthly spending, and interact with a Firebase backend for data storage.
+This application is a simple subscription tracker that allows users to manage their monthly subscriptions. It uses Firebase for authentication and database storage, and is built with modern, framework-less web technologies.
 
-## Features
+## Core Features
 
-*   **Subscription Form:** A form to add new subscriptions with details like name, price, and category.
-*   **Subscription List:** A real-time updated list of all subscriptions.
-*   **Total Monthly Spend:** A calculation of the total monthly cost of all subscriptions.
-*   **Delete Functionality:** The ability to remove subscriptions.
-*   **Dark Mode UI:** A modern and professional user interface with a dark theme using Tailwind CSS.
+- **Google Authentication:** Users can sign in securely with their Google account.
+- **Subscription Management:** Users can add, view, and delete their subscriptions.
+- **Real-time Updates:** The subscription list updates in real-time thanks to Firestore.
+- **Total Spend Calculation:** The application automatically calculates and displays the total monthly spend.
 
 ## Project Structure
 
-*   `index.html`: Main application file.
-*   `style.css`: For base styles and customizations.
-*   `main.js`: Core application logic for DOM manipulation and event handling.
-*   `firebase-config.js`: Firebase SDK initialization.
+- `index.html`: The main HTML file, containing the structure for both the login and dashboard pages.
+- `style.css`: Custom CSS for additional styling.
+- `main.js`: The core application logic, including authentication and Firestore interactions.
+- `firebase-config.js`: Firebase configuration and SDK initialization.
+- `build.sh`: A build script for generating the Firebase config on deployment.
+- `.gitignore`: To exclude sensitive files from version control.
 
-## Plan
+## Design and Styling
 
-1.  **Setup Firebase:** Configure the project to use Firebase services by updating `.idx/mcp.json` and creating a `firebase-config.js` file.
-2.  **HTML Structure:** Design the main layout in `index.html` including the form, subscription list, and total spend elements.
-3.  **Styling:** Apply a dark-mode, responsive UI using Tailwind CSS.
-4.  **JavaScript Logic:**
-    *   Implement form submission to add data to Firestore.
-    *   Fetch and display subscription data in real-time.
-    *   Calculate and display the total monthly spend.
-    *   Implement delete functionality.
-    *   Add comments to explain the Firebase interactions.
+- **Layout:** A clean, modern, single-page application design.
+- **Styling:** Tailwind CSS is used for utility-first styling.
+- **Components:** The application is divided into two main views: a login page and a dashboard.
+
+## Current Plan: Authentication and View Switching
+
+- **Objective:** Implement a secure login flow and separate the application into a login page and a dashboard.
+- **Steps:**
+    1.  **Update `firebase-config.js`:** Add the Firebase Authentication SDK.
+    2.  **Restructure `index.html`:** Create separate `<section>` elements for the login and dashboard views.
+    3.  **Refactor `main.js`:**
+        - Implement `onAuthStateChanged` to toggle view visibility.
+        - Create a `showDashboard` function that initializes the dashboard only after a successful login.
+        - Associate subscriptions with the logged-in user by adding a `userId` field to each subscription document.
